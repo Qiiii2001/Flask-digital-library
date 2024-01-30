@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="pt-5 mt-5"> <!-- Added padding and margin to push the content down -->
+    <form method="post" class="container mt-3">
+        {{ form.hidden_tag() }} <!-- CSRF token for form submission security -->
+
+        <div class="mb-3">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control") }}
+            {% if form.title.errors %}
+                {% for error in form.title.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.author.label(class="form-label") }}
+            {{ form.author(class="form-control") }}
+            {% if form.author.errors %}
+                {% for error in form.author.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.isbn.label(class="form-label") }}
+            {{ form.isbn(class="form-control") }}
+            {% if form.isbn.errors %}
+                {% for error in form.isbn.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.length.label(class="form-label") }}
+            {{ form.length(class="form-control") }}
+            {% if form.length.errors %}
+                {% for error in form.length.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.format.label(class="form-label") }}
+            {{ form.format(class="form-control") }}
+            {% if form.format.errors %}
+                {% for error in form.format.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+    </form>
+</div>
+{% endblock %}

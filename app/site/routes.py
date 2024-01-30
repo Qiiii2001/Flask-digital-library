@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash
-from models import db, Car, car_schema, cars_schema
-from forms import CarForm
+from models import db, Book, book_schema
+from forms import BookForm
 from flask import request, jsonify, redirect, url_for
 
 site = Blueprint('site',__name__,template_folder='site_templates')
@@ -19,88 +19,106 @@ def contact():
 
 
 
-@site.route('/car', methods=['POST'])
-def create_car():
-    # create a new car instance
-    form = CarForm(request.form)
+# Create Book
+@site.route('/book', methods=['POST'])
+def create_book():
+    form = BookForm(request.form)
     if form.validate_on_submit():
-        new_car = Car(
-            make=form.make.data,
-            model=form.model.data,
-            year=form.year.data
+        new_book = Book (
+            title = form.title.data,
+            author=form.author.data,
+            isbn=form.isbn.data,
+            length=form.length.data, 
+            format=form.format.data 
         )
-        db.session.add(new_car)
+        db.session.add(new_book)
         db.session.commit()
-        # For API
-        # return car_schema.jsonify(new_car)
         
-        return redirect(url_for('site.get_cars'))
+        # Json Response
+        # return book_schema.jsonify(new_book)
+        return redirect(url_for('site.get_books'))
 
-@site.route('/cars', methods=['GET'])
-def get_cars():
-    # retrieve all cars
-    cars = Car.query.all()
+
+
+@site.route('/books',methods=['GET'])
+def get_books():
+    books = Book.query.all()
+    # Json Response
+    # book_schema = BookSchema(many=True) 
+    # return jsonify(book_schema.dump(books))
+    return render_template('book_list.html', books=books)
     
-    return render_template('car_list.html', cars=cars)
-    
-@site.route('/add_car', methods=['GET', 'POST'])
-def add_car():
-    form = CarForm()
+
+
+# add_book form
+@site.route('/add_book', methods=['GET', 'POST'])
+def add_book():
+    form = BookForm()
     if form.validate_on_submit():
-        new_car = Car(make=form.make.data, model=form.model.data, year=form.year.data)
-        db.session.add(new_car)
+        new_book = Book(title=form.title.data, author=form.author.data, isbn=form.isbn.data,length=form.length.data,format=form.format.data)
+        db.session.add(new_book)
         db.session.commit()
-        return redirect(url_for('site.get_cars'))
-    return render_template('car_form.html', form=form)
+        # Json Response
+        # book_data = book_schema.dump(new_book)
+        # return jsonify(book_data), 201 
+        return redirect(url_for('site.get_books'))
+    return render_template('book_form.html', form=form)
 
 
 
-@site.route('/car/<string:id>', methods=['GET'])
-def get_car(id):
-    # retrieve a single car
-    car = Car.query.get_or_404(id)
-    return render_template('car_detail.html', car=car)
     
-    
-@site.route('/update_car/<string:id>', methods=['GET', 'POST'])
-def update_car(id):
-    car = Car.query.get_or_404(id)
-    if request.method == 'POST':
-        form = CarForm(request.form)
-        if form.validate_on_submit():
-            car.make = form.make.data
-            car.model = form.model.data
-            car.year = form.year.data
-            db.session.commit()
-            flash('Car updated successfully!', 'success')
-            return redirect(url_for('site.get_cars'))
-        else:
-            # If form did not validate, show form again with errors
-            flash('Error updating the car.', 'danger')
-            return render_template('car_form.html', form=form, car=car)
-    # If a GET request, show existing car data in form
-    form = CarForm(obj=car)
-    return render_template('car_form.html', form=form, car=car)
+@site.route('/book/<string:id>', methods=['GET'])
+def get_book(id):
+    book = Book.query.get_or_404(id)
+    return render_template('book_detail.html',book=book)
+   
 
-@site.route('/delete_car/<string:id>', methods=['POST'])
-def delete_car(id):
-    car = Car.query.get_or_404(id)
-    db.session.delete(car)
+
+# Update Book
+@site.route('/update_book/<string:id>', methods=['GET', 'POST'])
+def update_book(id):
+    book = Book.query.get_or_404(id)
+    form = BookForm(obj=book) 
+
+    if form.validate_on_submit():  
+        book.title = form.title.data
+        book.author = form.author.data
+        book.isbn = form.isbn.data
+        book.length = form.length.data
+        book.format = form.format.data
+        db.session.commit()
+        flash('Book updated successfully!', 'success')
+        # Api
+        # return jsonify(book_data), 200
+        return redirect(url_for('site.get_books'))
+    
+    return render_template('book_form.html', form=form, book=book)  # Moved outside of the POST request check
+
+
+@site.route('/delete_book/<string:id>',methods=['POST'])
+def delete_book(id):
+    book = Book.query.get_or_404(id)
+    db.session.delete(book)
     db.session.commit()
-    flash('Car deleted successfully!', 'success')
-    return redirect(url_for('site.get_cars'))
+    flash('Book deleted successfully!', 'success')
+    # Api
+    # return jsonify(response), 200
+    return redirect(url_for('site.get_books'))
 
 @site.route('/search')
 def search():
     query = request.args.get('query')
     if query:
         # Search by 'make' and 'model' fields 
-        results = Car.query.filter(
-            (Car.make.ilike('%' + query + '%')) | 
-            (Car.model.ilike('%' + query + '%'))
+        results = Book.query.filter(
+            (Book.title.ilike('%' + query + '%')) | 
+            (Book.author.ilike('%' + query + '%')) |
+            (Book.isbn.cast(db.String).ilike('%' + query + '%'))
         ).all()
     else:
         results = []
+    # Json Response
+    # return jsonify({'query': query, 'results': result_data})
     return render_template('search_results.html', query=query, results=results)
 
 @site.route('/contact_submit', methods=['POST'])

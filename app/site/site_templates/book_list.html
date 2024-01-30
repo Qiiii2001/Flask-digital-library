@@ -1,0 +1,46 @@
+<!-- Include a table or list to display all books -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="mb-3">
+        <a href="{{ url_for('site.add_book') }}" class="btn btn-success">Add Book</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Length</th>
+                <th>Format</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.isbn }}</td>
+                <td>{{ book.length }}</td>
+                <td>{{ book.format }}</td>
+                <td>
+                    <a href="{{ url_for('site.get_book', id=book.id) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ url_for('site.update_book', id=book.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    <form action="{{ url_for('site.delete_book', id=book.id) }}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">No books available in the there.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

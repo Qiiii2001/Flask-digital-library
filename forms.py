@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm 
-from wtforms import StringField, IntegerField, PasswordField, SubmitField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length,Email, NumberRange
 
 class UserLoginForm(FlaskForm):
@@ -14,8 +14,16 @@ class UserRegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit_button = SubmitField('Sign Up')
 
-class CarForm(FlaskForm):
-    make = StringField('Make', validators=[DataRequired(), Length(min=2, max=50)])
-    model = StringField('Model', validators=[DataRequired(), Length(min=2, max=50)])
-    year = IntegerField('Year', validators=[DataRequired(), NumberRange(min=1900, max=2100)])
+
+
+class BookForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(min=2, max=50)])
+    author = StringField('Author', validators=[DataRequired(), Length(min=2, max=50)])
+    isbn = IntegerField('ISBN', validators=[DataRequired()])
+    length = IntegerField('Length',validators=[DataRequired(),NumberRange(min=10,max=10000)])
+    format = SelectField(
+        'Format', 
+        choices=[('hardcover', 'Hardcover'), ('paperback', 'Paperback')],
+        validators=[DataRequired()]
+    )
     submit = SubmitField('Submit')

@@ -81,32 +81,31 @@ class ContactSchema(ma.Schema):
 contact_schema = ContactSchema()
 contacts_schema = ContactSchema(many=True)
 
-# ... existing code ...
 
-class Car(db.Model):
-    id = db.Column(db.String, primary_key=True)
-    make = db.Column(db.String(150), nullable=False)
-    model = db.Column(db.String(150), nullable=False)
-    year = db.Column(db.Integer, nullable=False)
+class Book(db.Model):
+    id = db.Column(db.String(), primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    author = db.Column(db.String(150), nullable=False)
+    isbn = db.Column(db.BigInteger, nullable=False)
+    length = db.Column(db.Integer, nullable=False)
+    format = db.Column(db.String(20), nullable=False)
     
-
-    def __init__(self, make, model, year):
+    def __init__(self, title,author,isbn,length,format):
         self.id = self.set_id()
-        self.make = make
-        self.model = model
-        self.year = year
-
+        self.title = title
+        self.author = author
+        self.isbn = isbn
+        self.length = length
+        self.format = format
+        
     def set_id(self):
         return (secrets.token_urlsafe())
-
     def __repr__(self):
-        return f'Car {self.make} {self.model} {self.year}'
+        return f'Book {self.title} {self.author} {self.isbn} {self.length} {self.format}'
 
-class CarSchema(ma.Schema):
+class BookSchema(ma.Schema):
     class Meta:
-        fields = ['id', 'make', 'model', 'year']
+        fields = ['id', 'title', 'author', 'isbn', 'length', 'format']
 
-car_schema = CarSchema()
-cars_schema = CarSchema(many=True)
-
-# ... existing code ...
+book_schema = BookSchema()
+books_schema = BookSchema(many=True)
