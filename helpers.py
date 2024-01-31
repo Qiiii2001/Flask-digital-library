@@ -2,7 +2,7 @@ from functools import wraps
 import secrets
 from flask import request, jsonify, json
 import decimal
-
+from models import Book
 from models import User
 
 def token_required(our_flask_function):
